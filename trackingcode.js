@@ -6,9 +6,6 @@ let TrackingCode = {
 	 * Constantes communes au dispotif in-situ et en ligne
 	 */
 	universal: {
-		/**
-		 * Constantes communes au dispotif in-situ et en ligne
-		 */
 		startingDateTime: new Date(2026, 3,  1,  0, 0, 0).valueOf(), //Début du décompte le 1er avril 2026,
 		endingDateTime:   new Date(2026, 4, 31, 20, 0, 0).valueOf(), //Fin de l'événement (pour vérifier la longueur en bits du stockage)
 		bulleMax:      7, // Nombre max de bulles
@@ -29,8 +26,8 @@ let TrackingCode = {
 
 	/**
 	 * Génère le contexte de numérisation
-	 * @param  {Function} context Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
-	 * @return {Object}    	      Un numéro de suivi
+	 * @param  {Object} context Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
+	 * @return {String}    	    Un numéro de suivi
 	 */
 	encode: function(context) {
 		if(!this.hasInit) this.init();
@@ -89,8 +86,8 @@ let TrackingCode = {
 
 	/**
 	 * Décode un numéro de suivi en contexte de numérisation
-	 * @param  {Function} code (Facultatif) Un numéro de suivi. S’il n’est pas spéficié, le code en query d’URL est recherché et utilisé.
-	 * @return {Object}    	   Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
+	 * @param  {String} code (Facultatif) Un numéro de suivi. S’il n’est pas spéficié, le code en query d’URL est recherché et utilisé.
+	 * @return {Object} 	 Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
 	 */
 	decode: function(code) {
 		if(!this.hasInit) this.init();
