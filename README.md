@@ -5,12 +5,12 @@ Aucune dépendance n’est nécessaire.
 ## Décodage d’un numéro de suivi
 Sauf contrainte technique, le plus simple est d’appeler directement la fonction :
 ```
-TrackingCode.decode()
+let contexte = TrackingCode.decode()
 ```
 Cette dernière va rechercher le paramètre GET ```code``` et l’utiliser commme un numéro de suivi.
 Pour forcer un code particulier, il est possible de passer le code de suivi de colis en paramètre de la fonction :
 ```
-TrackingCode.decode("92UDMH")
+let contexte = TrackingCode.decode("92UDMH")
 ```
 La fonction va retourner un _contexte_, c'est à dire un objet JavaScript contenant les informations de contexte de la numérisation du colis :
 ```
@@ -31,7 +31,7 @@ La fonction va retourner un _contexte_, c'est à dire un objet JavaScript conten
 ## Encodage d’un numéro de suivi
 À l’opposé de la fonction de décodage, la fonction `TrackingCode.encode` retourne un numéro de suivi pour un _contexte_ donné. Par exemple :
 ```
-TrackingCode.encode({
+let code = TrackingCode.encode({
 	date: new Date(),
 	bulle: 2,
 	mediaCount: 1,
