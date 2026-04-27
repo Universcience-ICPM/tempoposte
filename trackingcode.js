@@ -28,44 +28,12 @@ let TrackingCode = {
 	 */
 
 	/**
-	 * Initialise le codeur/décodeur de numéro de suivi
-	 * @param  {Function} readyCallback (Facultatif) Callback appelé quand l'initialisation est terminée
-	 */
-	init: function(readyCallback) {
-		//Concatère les infos
-		this.universal.sequences.all = this.universal.sequences.header.concat(this.universal.sequences.payload);
-
-		//Traitement sur l'heure : tente de réduire au maximum la taille des données, et encode la position de la date entre deux bornes min/max
-		this.universal.timestampMax = this.simplifyDateTime(this.universal.endingDateTime);
-		
-		//Pré-calcule les tailles binaires des éléments encodés dans la séquence
-		for (const sequenceItem of this.universal.sequences.all)
-			this.universal[`${sequenceItem}Max`] = this.getBinaryFormOf(0, this.universal[`${sequenceItem}Max`]);
-
-		//Somme des longueurs en bits
-		this.universal.bits = 0;
-		for (const sequenceItem of this.universal.sequences.all)
-			this.universal.bits += this.universal[`${sequenceItem}Max`].bits;
-
-		//Nombre de caractère du numéro de tracking : actuel et potentiel (si on utilise tous les bits)
-		this.universal.codeLength = Math.ceil(this.universal.bits / 5);
-		this.universal.bitsMax = this.universal.codeLength * 5
-
-		//Démarre le salage itératif
-		this.saltIndex = 0;
-
-		//Prêt !
-		console.log(`Initialisation de l'encodage du numéro de suivit sur ${this.universal.bits} bits soit ${this.universal.codeLength} caractères de codage. ${this.universal.bitsMax - this.universal.bits} bits de rab`, this.universal);
-		if(readyCallback)
-			readyCallback.call();
-	},
-
-	/**
 	 * Génère le contexte de numérisation
 	 * @param  {Function} context Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
 	 * @return {Object}    	      Un numéro de suivi
 	 */
 	encode: function(context) {
+		if(!this.hasInit) this.init();
 		context.binary = {};
 		context.infos = {};
 
@@ -121,10 +89,11 @@ let TrackingCode = {
 
 	/**
 	 * Décode un numéro de suivi en contexte de numérisation
-	 * @param  {Function} code Un numéro de suivi
-	 * @return {Object}    	  Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
+	 * @param  {Function} code (Facultatif) Un numéro de suivi. S’il n’est pas spéficié, le code en query d’URL est recherché et utilisé.
+	 * @return {Object}    	   Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
 	 */
 	decode: function(code) {
+		if(!this.hasInit) this.init();
 		let context = null;
 
 		//Si le code n'est pas renseigné, on le prends en GET
@@ -195,6 +164,35 @@ let TrackingCode = {
 	/**
 	 * Autres fonctions utilitaires nécessaires au codage-décodage
 	 */
+
+	//Initialise le codeur/décodeur de numéro de suivi
+	init: function() {
+		//Concatère les infos
+		this.universal.sequences.all = this.universal.sequences.header.concat(this.universal.sequences.payload);
+
+		//Traitement sur l'heure : tente de réduire au maximum la taille des données, et encode la position de la date entre deux bornes min/max
+		this.universal.timestampMax = this.simplifyDateTime(this.universal.endingDateTime);
+		
+		//Pré-calcule les tailles binaires des éléments encodés dans la séquence
+		for (const sequenceItem of this.universal.sequences.all)
+			this.universal[`${sequenceItem}Max`] = this.getBinaryFormOf(0, this.universal[`${sequenceItem}Max`]);
+
+		//Somme des longueurs en bits
+		this.universal.bits = 0;
+		for (const sequenceItem of this.universal.sequences.all)
+			this.universal.bits += this.universal[`${sequenceItem}Max`].bits;
+
+		//Nombre de caractère du numéro de tracking : actuel et potentiel (si on utilise tous les bits)
+		this.universal.codeLength = Math.ceil(this.universal.bits / 5);
+		this.universal.bitsMax = this.universal.codeLength * 5
+
+		//Démarre le salage itératif
+		this.saltIndex = 0;
+
+		//Prêt !
+		console.log(`Initialisation de l'encodage du numéro de suivit sur ${this.universal.bits} bits soit ${this.universal.codeLength} caractères de codage. ${this.universal.bitsMax - this.universal.bits} bits de rab`, this.universal);
+		this.hasInit = true;
+	},
 
 	//Retourne une date simplifiée à partir d'une date normale
 	simplifyDateTime: function(timestamp) {
