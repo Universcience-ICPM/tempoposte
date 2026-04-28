@@ -1,4 +1,4 @@
-# TempoPoste
+# Tempoposte
 Objet JavaScript permettant d’encoder et de décoder un code de suivi de la Tempoposte.
 Aucune dépendance n’est nécessaire.
 
