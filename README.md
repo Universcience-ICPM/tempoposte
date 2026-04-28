@@ -39,3 +39,9 @@ let code = TrackingCode.encode({
 });
 ```
 retournera un code de suivi à la date actuelle, pour la bulle 2, contenant 1 seul média et aucun témoignage audio.
+
+## Démo
+Une démo d'encodage en temps réel est disponible ici : https://capsule.bruit-bleu.fr/tempopost/
+
+Exemple d'un décodage : https://capsule.bruit-bleu.fr/tempopost/?code=92UDMH
+
