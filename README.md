@@ -1,4 +1,4 @@
-# Tempopost • Week-end des 40ans de la Cité des Sciences et de l'Industrie
+# Tempopost — Week-end des 40ans de la CSI
 Objet JavaScript permettant d’encoder et de décoder un code de suivi de la Tempoposte.
 Aucune dépendance n’est nécessaire.
 
