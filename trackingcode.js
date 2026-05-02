@@ -1,3 +1,5 @@
+export {TrackingCode as default};
+
 /**
  * Objet permettant l'encodage et le décodage d'un code de suivi de la Tempoposte
  */
@@ -55,8 +57,9 @@ let TrackingCode = {
 
 	/**
 	 * Génère le contexte de numérisation
-	 * @param  {Object} context Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
-	 * @return {String}    	    Un numéro de suivi
+	 * @param  {Object}  context Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
+	 * @param  {Boolean} verbose (Facultatif) Affiche les infos dans la console
+	 * @return {String}    	     Un numéro de suivi
 	 */
 	encode: function(context, verbose=false) {
 		if(!this.hasInit) this.init();
@@ -118,7 +121,8 @@ let TrackingCode = {
 
 	/**
 	 * Décode un numéro de suivi en contexte de numérisation
-	 * @param  {String} code (Facultatif) Un numéro de suivi. S’il n’est pas spéficié, le code en query d’URL est recherché et utilisé.
+	 * @param  {String}  code    (Facultatif) Un numéro de suivi. S’il n’est pas spéficié, le code en query d’URL est recherché et utilisé.
+	 * @param  {Boolean} verbose (Facultatif) Affiche les infos dans la console
 	 * @return {Object} 	 Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
 	 */
 	decode: function(code, verbose=false) {
