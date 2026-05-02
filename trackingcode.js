@@ -5,17 +5,46 @@ let TrackingCode = {
 	/**
 	 * Constantes communes au dispotif in-situ et en ligne
 	 */
-	universal: {
-		startingDateTime: new Date(2026, 3,  1,  0, 0, 0).valueOf(), //Début du décompte le 1er avril 2026,
-		endingDateTime:   new Date(2026, 4, 31, 20, 0, 0).valueOf(), //Fin de l'événement (pour vérifier la longueur en bits du stockage)
-		bulleMax:      7, // Nombre max de bulles
-		mediaCountMax: 3, // Nombre max de médias par tickets
-		hasAudioMax:   1, // Présence ou non d'audio
-		saltMax:       Math.pow(2, 3), // Quantité max de salage
+	common: {
+		bulles: [
+			{
+				name: "Messages de la Cité",
+				localisation: "BSI",
+			},
+			{
+				name: "Urban Craft",
+				localisation: "BSI",
+			},
+			{
+				name: "Futures scientifiques",
+				localisation: "Balcon",
+			},
+			{
+				name: "Mission locale citoyenne",
+				localisation: "Balcon",
+			},
+			{
+				name: "Cité vivante",
+				localisation: "Balcon",
+			},
+			{
+				name: "Ville à hauteur d’enfant",
+				localisation: "Balcon",
+			},
+			{
+				name: "Écrire des futurs désirables",
+				localisation: "Balcon",
+			},
+		],
+		startingDateTime: new Date(2026, 4, 30,  0,  0, 0).valueOf(), //Début du décompte le 29 mai 2026 minuit,
+		endingDateTime:   new Date(2026, 5,  1,  0,  0, 0).valueOf(), //Fin de l'événement le 1er juin minuit
+		bulleMax:      	  Math.pow(2, 4), // 4 bits pour les bulles • Nombre max de bulles
+		hasAudioMax:   	  Math.pow(2, 0), // 1 bit pour l'audio • Présence ou non d'audio
+		saltMax:       	  Math.pow(2, 3), // 3 bits pour le sallage • Quantité max de salage
 		sequences: { // Ordre de l'encodage et du décodage
 			header:  ["salt"],
-			payload: ["timestamp", "bulle", "mediaCount", "hasAudio"],
-			infos: ["code", "date", "bulle", "mediaCount", "hasAudio", "salt"],
+			payload: ["timestamp", "bulle", "hasAudio"],
+			infos: ["code", "date", "bulle", "hasAudio", "salt"],
 		}
 	},
 
@@ -29,7 +58,7 @@ let TrackingCode = {
 	 * @param  {Object} context Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
 	 * @return {String}    	    Un numéro de suivi
 	 */
-	encode: function(context) {
+	encode: function(context, verbose=false) {
 		if(!this.hasInit) this.init();
 		context.binary = {};
 		context.infos = {};
@@ -39,13 +68,13 @@ let TrackingCode = {
 
 		//Choiti un salage
 		context.salt = this.saltIndex;
-		this.saltIndex = (this.saltIndex + 1) % (this.universal.saltMax.max + 1)
+		this.saltIndex = (this.saltIndex + 1) % (this.common.saltMax.max + 1)
 
 		//Construit le header du message binaire
 		context.binary.word = ""
-		for (const sequenceItem of this.universal.sequences.header) {
+		for (const sequenceItem of this.common.sequences.header) {
 			//Conversion binaire
-			context.binary[sequenceItem] = this.getBinaryFormOf(context[sequenceItem], this.universal[`${sequenceItem}Max`].max);
+			context.binary[sequenceItem] = this.getBinaryFormOf(context[sequenceItem], this.common[`${sequenceItem}Max`].max);
 
 			//Concaténe le mot binaire
 			context.binary.word += context.binary[sequenceItem].word
@@ -53,9 +82,9 @@ let TrackingCode = {
 
 		//Construit le payload message binaire
 		let payload = "";
-		for (const sequenceItem of this.universal.sequences.payload) {
+		for (const sequenceItem of this.common.sequences.payload) {
 			//Conversion binaire
-			context.binary[sequenceItem] = this.getBinaryFormOf(context[sequenceItem], this.universal[`${sequenceItem}Max`].max);
+			context.binary[sequenceItem] = this.getBinaryFormOf(context[sequenceItem], this.common[`${sequenceItem}Max`].max);
 
 			//Concaténe le mot binaire
 			payload += context.binary[sequenceItem].word
@@ -72,14 +101,17 @@ let TrackingCode = {
 		context.binary.val = parseInt(context.binary.word, 2);
 
 		//Convertit le nombre en base32
-		context.code = this.toBase32(context.binary.val).padStart(this.universal.codeLength, "0").toUpperCase();
+		context.code = this.toBase32(context.binary.val).padStart(this.common.codeLength, "0").toUpperCase();
 
 		//Package proprement toutes les infos utiles pour la suite
-		console.log(`Encodage avec ${context.code} du contexte`, context);
-		for (const sequenceItem of this.universal.sequences.infos) {
-			console.log(`\t${sequenceItem} = ${context[sequenceItem]}`);
-			context.infos[sequenceItem] = context[sequenceItem];
+		if(context.verbose) {
+			console.log(`Encodage avec ${context.code} du contexte`, context);
+			for (const sequenceItem of this.common.sequences.infos) {
+				console.log(`\t${sequenceItem} = ${context[sequenceItem]}`);
+				context.infos[sequenceItem] = context[sequenceItem];
+			}
 		}
+
 
 		return context;
 	},
@@ -89,7 +121,7 @@ let TrackingCode = {
 	 * @param  {String} code (Facultatif) Un numéro de suivi. S’il n’est pas spéficié, le code en query d’URL est recherché et utilisé.
 	 * @return {Object} 	 Objet contenant le contexte (timestamp, bulle, nombre de médias, présence d’un témoignage) à encoder
 	 */
-	decode: function(code) {
+	decode: function(code, verbose=false) {
 		if(!this.hasInit) this.init();
 		let context = null;
 
@@ -105,17 +137,17 @@ let TrackingCode = {
 			context.binary.val = this.fromBase32(context.code);
 
 			//Convertit le nombre en binaire
-			context.binary.word = context.binary.val.toString(2).padStart(this.universal.bits, "0");
+			context.binary.word = context.binary.val.toString(2).padStart(this.common.bits, "0");
 
 			//Déconstruit le message binaire en mots
 			let header = context.binary.word;
 			//Extrait le header
-			for (const sequenceItem of this.universal.sequences.header) {
+			for (const sequenceItem of this.common.sequences.header) {
 				//Extrait les n premiers bits et les convertit en int
-				context.binary[sequenceItem] = this.setBinaryFormOf(header.substring(0, this.universal[`${sequenceItem}Max`].bits));
+				context.binary[sequenceItem] = this.setBinaryFormOf(header.substring(0, this.common[`${sequenceItem}Max`].bits));
 
 				//Retire les n premiers bits pour l'itération suivante
-				header = header.substring(this.universal[`${sequenceItem}Max`].bits);
+				header = header.substring(this.common[`${sequenceItem}Max`].bits);
 
 				//Affecte les valeurs au contexte
 				context[sequenceItem] = context.binary[sequenceItem].val;
@@ -125,12 +157,12 @@ let TrackingCode = {
 			let payload = this.circularString(header, -context.salt);
 
 			//Extrait le payload
-			for (const sequenceItem of this.universal.sequences.payload) {
+			for (const sequenceItem of this.common.sequences.payload) {
 				//Extrait les n premiers bits et les convertit en int
-				context.binary[sequenceItem] = this.setBinaryFormOf(payload.substring(0, this.universal[`${sequenceItem}Max`].bits));
+				context.binary[sequenceItem] = this.setBinaryFormOf(payload.substring(0, this.common[`${sequenceItem}Max`].bits));
 
 				//Retire les n premiers bits pour l'itération suivante
-				payload = payload.substring(this.universal[`${sequenceItem}Max`].bits);
+				payload = payload.substring(this.common[`${sequenceItem}Max`].bits);
 
 				//Affecte les valeurs au contexte
 				context[sequenceItem] = context.binary[sequenceItem].val;
@@ -140,14 +172,16 @@ let TrackingCode = {
 			context.date = this.constructDateTime(context.timestamp);
 
 			//Vérifie la date
-			context.check = (this.universal.startingDateTime <= context.date) && (context.date <= this.universal.endingDateTime);
+			context.check = (this.common.startingDateTime <= context.date) && (context.date <= this.common.endingDateTime);
 
 			//Retour
 			if(context.check) {
-				console.log(`Décodage de ${code}`, context);
-				for (const sequenceItem of this.universal.sequences.infos) {
-					console.log(`\t${sequenceItem} = ${context[sequenceItem]}`);
-					context.infos[sequenceItem] = context[sequenceItem];
+				if(verbose) {
+					console.log(`Décodage de ${code}`, context);
+					for (const sequenceItem of this.common.sequences.infos) {
+						console.log(`\t${sequenceItem} = ${context[sequenceItem]}`);
+						context.infos[sequenceItem] = context[sequenceItem];
+					}
 				}
 			}
 			else
@@ -165,41 +199,41 @@ let TrackingCode = {
 	//Initialise le codeur/décodeur de numéro de suivi
 	init: function() {
 		//Concatère les infos
-		this.universal.sequences.all = this.universal.sequences.header.concat(this.universal.sequences.payload);
+		this.common.sequences.all = this.common.sequences.header.concat(this.common.sequences.payload);
 
 		//Traitement sur l'heure : tente de réduire au maximum la taille des données, et encode la position de la date entre deux bornes min/max
-		this.universal.timestampMax = this.simplifyDateTime(this.universal.endingDateTime);
+		this.common.timestampMax = this.simplifyDateTime(this.common.endingDateTime);
 		
 		//Pré-calcule les tailles binaires des éléments encodés dans la séquence
-		for (const sequenceItem of this.universal.sequences.all)
-			this.universal[`${sequenceItem}Max`] = this.getBinaryFormOf(0, this.universal[`${sequenceItem}Max`]);
+		for (const sequenceItem of this.common.sequences.all)
+			this.common[`${sequenceItem}Max`] = this.getBinaryFormOf(0, this.common[`${sequenceItem}Max`]);
 
 		//Somme des longueurs en bits
-		this.universal.bits = 0;
-		for (const sequenceItem of this.universal.sequences.all)
-			this.universal.bits += this.universal[`${sequenceItem}Max`].bits;
+		this.common.bits = 0;
+		for (const sequenceItem of this.common.sequences.all)
+			this.common.bits += this.common[`${sequenceItem}Max`].bits;
 
 		//Nombre de caractère du numéro de tracking : actuel et potentiel (si on utilise tous les bits)
-		this.universal.codeLength = Math.ceil(this.universal.bits / 5);
-		this.universal.bitsMax = this.universal.codeLength * 5
+		this.common.codeLength = Math.ceil(this.common.bits / 5);
+		this.common.bitsMax = this.common.codeLength * 5
 
 		//Démarre le salage itératif
 		this.saltIndex = 0;
 
 		//Prêt !
-		console.log(`Initialisation de l'encodage du numéro de suivit sur ${this.universal.bits} bits soit ${this.universal.codeLength} caractères de codage. ${this.universal.bitsMax - this.universal.bits} bits de rab`, this.universal);
+		console.log(`Initialisation de l'encodage du numéro de suivit sur ${this.common.bits} bits soit ${this.common.codeLength} caractères de codage. ${this.common.bitsMax - this.common.bits} bits de rab`, this.common);
 		this.hasInit = true;
 	},
 
 	//Retourne une date simplifiée à partir d'une date normale
 	simplifyDateTime: function(timestamp) {
 		//Retire la date de référence à la date en argument, supprime les millisecondes (/ 1000) et réduit les secondes (/ 10)
-		return Math.floor((timestamp - this.universal.startingDateTime) / 1000 / 10);
+		return Math.floor((timestamp - this.common.startingDateTime) / 1000 / 10);
 	},
 	//Retourne une date normale à partir d'une date simplifiée
 	constructDateTime: function(simplifiedDateTime) {
 		//Ajoute les secondes (* 60), les millisecondes (* 1000) et ajoute la date de référence
-		return new Date((simplifiedDateTime * 10 * 1000) + this.universal.startingDateTime);
+		return new Date((simplifiedDateTime * 10 * 1000) + this.common.startingDateTime);
 	},
 
 	//Retourne la représentation binaire d'un nombre, connaissant sa borne supérieure
