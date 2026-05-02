@@ -10,22 +10,20 @@ let contexte = TrackingCode.decode()
 Cette dernière va rechercher le paramètre GET ```code``` et l’utiliser commme un numéro de suivi.
 Pour forcer un code particulier, il est possible de passer le code de suivi de colis en paramètre de la fonction :
 ```
-let contexte = TrackingCode.decode("92UDMH")
+let contexte = TrackingCode.decode("098E4")
 ```
 La fonction va retourner un _contexte_, c'est à dire un objet JavaScript contenant les informations de contexte de la numérisation du colis :
 ```
 {
-	"code": "92UDMH",
-	"date": "2026-04-12T15:27:30.000Z",
-	"bulle": 5,
-	"mediaCount": 2,
-	"hasAudio": 1
+	"code": "098E4",
+	"date": "2026-05-30T13:10:30.000Z",
+	"bulle": 2,
+	"hasAudio": 0
 }
 ```
 * `code` : le code de suivi décodé
 * `date` : la date d’envoi du code de type `Date`
 * `bulle` : le numéro de l’activité où l’envoi a eu lieu
-* `mediaCount` : le nombre de médias scannés avec le tickets (par exemple, une maquette et un dessin font 2 médias dans l’envoi)
 * `hasAudio` : le·la visiteur·euse a-t-il laissé un témoignage audio ?
 
 ## Encodage d’un numéro de suivi
@@ -33,15 +31,8 @@ La fonction va retourner un _contexte_, c'est à dire un objet JavaScript conten
 ```
 let code = TrackingCode.encode({
 	date: new Date(),
-	bulle: 2,
-	mediaCount: 1,
-	hasAudio: 0
+	bulle: 5,
+	hasAudio: 1
 });
 ```
-retournera un code de suivi à la date actuelle, pour la bulle 2, contenant 1 seul média et aucun témoignage audio.
-
-## Démo
-Une démo d'encodage en temps réel est disponible ici : https://capsule.bruit-bleu.fr/tempopost/
-
-Exemple d'un décodage : https://capsule.bruit-bleu.fr/tempopost/?code=92UDMH
-
+retournera un code de suivi à la date actuelle, pour la bulle 5, avec un témoignage audio.
