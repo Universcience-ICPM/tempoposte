@@ -10,13 +10,13 @@ let contexte = TrackingCode.decode()
 Cette dernière va rechercher le paramètre GET ```code``` et l’utiliser commme un numéro de suivi.
 Pour forcer un code particulier, il est possible de passer le code de suivi de colis en paramètre de la fonction :
 ```
-let contexte = TrackingCode.decode("098E4")
+let contexte = TrackingCode.decode("2VH08")
 ```
 La fonction va retourner un _contexte_, c'est à dire un objet JavaScript contenant les informations de contexte de la numérisation du colis :
 ```
 {
-	"code": "098E4",
-	"date": "2026-05-30T13:10:30.000Z",
+	"code": "2VH08",
+	"date": "2026-05-30T13:27:12.000Z",
 	"bulle": 2,
 	"hasAudio": 0
 }
