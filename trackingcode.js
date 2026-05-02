@@ -1,5 +1,3 @@
-export {TrackingCode as default};
-
 /**
  * Objet permettant l'encodage et le décodage d'un code de suivi de la Tempoposte
  */
@@ -107,7 +105,7 @@ let TrackingCode = {
 		context.code = this.toBase32(context.binary.val).padStart(this.common.codeLength, "0").toUpperCase();
 
 		//Package proprement toutes les infos utiles pour la suite
-		if(context.verbose) {
+		if(verbose) {
 			console.log(`Encodage avec ${context.code} du contexte`, context);
 			for (const sequenceItem of this.common.sequences.infos) {
 				console.log(`\t${sequenceItem} = ${context[sequenceItem]}`);
