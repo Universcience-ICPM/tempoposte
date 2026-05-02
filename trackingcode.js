@@ -230,12 +230,12 @@ let TrackingCode = {
 	//Retourne une date simplifiée à partir d'une date normale
 	simplifyDateTime: function(timestamp) {
 		//Retire la date de référence à la date en argument, supprime les millisecondes (/ 1000) et réduit les secondes (/ 10)
-		return Math.floor((timestamp - this.common.startingDateTime) / 1000 / 10);
+		return Math.floor((timestamp - this.common.startingDateTime) / 1000 / 6);
 	},
 	//Retourne une date normale à partir d'une date simplifiée
 	constructDateTime: function(simplifiedDateTime) {
 		//Ajoute les secondes (* 60), les millisecondes (* 1000) et ajoute la date de référence
-		return new Date((simplifiedDateTime * 10 * 1000) + this.common.startingDateTime);
+		return new Date((simplifiedDateTime * 6 * 1000) + this.common.startingDateTime);
 	},
 
 	//Retourne la représentation binaire d'un nombre, connaissant sa borne supérieure
