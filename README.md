@@ -52,4 +52,5 @@ La bulle n°5 devrait retourner l'objet suivant :
 {
 	name: "Ville à hauteur d’enfant",
 	localisation: "Balcon",
-}```
+}
+```
