@@ -47,4 +47,9 @@ const context = {
 });
 const bulleName = TrackingCode.common.bulles[context.bulle]
 ```
-La bulle n°5 devrait retourner ```"Ville à hauteur d’enfant"```
+La bulle n°5 devrait retourner l'objet suivant :
+```
+{
+	name: "Ville à hauteur d’enfant",
+	localisation: "Balcon",
+}```
