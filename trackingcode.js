@@ -1,7 +1,7 @@
 /**
  * Objet permettant l'encodage et le décodage d'un code de suivi de la Tempoposte
  */
-let TrackingCode = {
+const TrackingCode = {
 	/**
 	 * Constantes communes au dispotif in-situ et en ligne
 	 */
@@ -240,7 +240,7 @@ let TrackingCode = {
 
 	//Retourne la représentation binaire d'un nombre, connaissant sa borne supérieure
 	getBinaryFormOf: function(val, max) {
-		let binaryForm = {
+		const binaryForm = {
 			val:  val,
 			word: val.toString(2),
 			max:  max,
