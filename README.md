@@ -33,7 +33,7 @@ const code = TrackingCode.encode({
 	date: new Date(),
 	bulle: 5,
 	hasAudio: 1
-});
+})
 ```
 retournera un code de suivi à la date actuelle, pour la bulle 5, avec un témoignage audio.
 
@@ -44,7 +44,7 @@ const context = {
 	…
 	bulle: 5,
 	…
-});
+}
 const bulleName = TrackingCode.common.bulles[context.bulle]
 ```
 La bulle n°5 devrait retourner l'objet suivant :
