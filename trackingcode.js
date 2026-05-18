@@ -8,33 +8,43 @@ const TrackingCode = {
 	common: {
 		bulles: [
 			{
-				name: "Messages de la Cité",
-				localisation: "BSI",
+				name: "La ville à hauteur d’enfant",
+				localisation: "Bibliothèque Jeunesse",
+				niveau: 0,
 			},
 			{
-				name: "Urban Craft",
-				localisation: "BSI",
+				name: "Futurs de la Cité",
+				localisation: "Bibliothèque Jeunesse",
+				niveau: 0,
+			},
+
+			{
+				name: "Cité vivante",
+				localisation: "Autour d’Urgence Climatique",
+				niveau: 1,
 			},
 			{
-				name: "Futures scientifiques",
-				localisation: "Balcon",
+				name: "6T-IRL",
+				localisation: "Autour d’Urgence Climatique",
+				niveau: 1,
+			},
+
+			{
+				name: "Urban Craft : Ma Villette",
+				localisation: "Balcon Jardiner",
+				niveau: 2,
+			},
+			{
+				name: "FuturEs scientifiques",
+				localisation: "Balcon Jardiner",
+				niveau: 2,
 			},
 			{
 				name: "Mission locale citoyenne",
-				localisation: "Balcon",
+				localisation: "Balcon Jardiner",
+				niveau: 2,
 			},
-			{
-				name: "Cité vivante",
-				localisation: "Balcon",
-			},
-			{
-				name: "Ville à hauteur d’enfant",
-				localisation: "Balcon",
-			},
-			{
-				name: "Écrire des futurs désirables",
-				localisation: "Balcon",
-			},
+
 		],
 		startingDateTime: new Date(2026, 4, 30,  0,  0, 0).valueOf(), //Début du décompte le 29 mai 2026 minuit,
 		endingDateTime:   new Date(2026, 5,  1,  0,  0, 0).valueOf(), //Fin de l'événement le 1er juin minuit
